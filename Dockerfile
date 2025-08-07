@@ -1,4 +1,4 @@
-FROM node:20 as builder
+FROM node:24 as builder
 
 WORKDIR /build
 
@@ -9,21 +9,27 @@ RUN yarn --frozen-lockfile
 
 COPY ./web .
 COPY ./VERSION .
-RUN DISABLE_ESLINT_PLUGIN='true' VITE_APP_VERSION=$(cat VERSION) npm run build
+RUN DISABLE_ESLINT_PLUGIN='true' VITE_APP_VERSION=$(cat VERSION) yarn build
 
-FROM golang:1.24.2 AS builder2
+FROM golang:1.24.6 AS builder2
 
 ENV GO111MODULE=on \
     CGO_ENABLED=1 \
     GOOS=linux \
-    GOPROXY=https://proxy.golang.org,direct
+    GOARM=7 \
+    CGO_CFLAGS="-O3 -march=armv8-a" \
+    CGO_CXXFLAGS="-O3 -march=armv8-a"
 
 WORKDIR /build
 ADD go.mod go.sum ./
 RUN go mod download
 COPY . .
 COPY --from=builder /build/build ./web/build
-RUN go build -ldflags "-s -w -X 'done-hub/common.Version=$(cat VERSION)' -extldflags '-static'" -o done-hub
+RUN go build -ldflags "-s -w -X 'done-hub/common.Version=$(cat VERSION)' -extldflags '-static'" \
+-tags netgo,osusergo \
+-trimpath \
+-buildvcs=false \
+-o done-hub
 
 FROM alpine:latest
 
