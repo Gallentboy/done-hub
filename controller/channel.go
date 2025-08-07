@@ -5,6 +5,7 @@ import (
 	"done-hub/common/utils"
 	"done-hub/model"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -91,18 +92,38 @@ func AddChannel(c *gin.Context) {
 
 		channels = append(channels, localChannel)
 	}
-	err = model.BatchInsertChannels(channels)
-	if err != nil {
+
+	batchSize := 1000
+	totalChannels := len(channels)
+	var es []string
+	successCount := 0
+
+	for i := 0; i < totalChannels; i += batchSize {
+		end := i + batchSize
+		if end > totalChannels {
+			end = totalChannels
+		}
+
+		batch := channels[i:end]
+		err := model.BatchInsertChannels(batch)
+		if err != nil {
+			es = append(es, fmt.Sprintf("批次 %d-%d 失败: %s", i, end-1, err.Error()))
+		} else {
+			successCount += len(batch)
+		}
+	}
+
+	if len(es) > 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
-			"message": err.Error(),
+			"message": fmt.Sprintf("部分插入失败，成功 %d 条，错误: %s", successCount, strings.Join(es, "; ")),
 		})
-		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": fmt.Sprintf("成功插入 %d 条记录", successCount),
+		})
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "",
-	})
 }
 
 func DeleteChannel(c *gin.Context) {
