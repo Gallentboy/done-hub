@@ -4,6 +4,7 @@ import (
 	"done-hub/common/config"
 	"done-hub/common/logger"
 	"done-hub/common/utils"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -209,6 +210,55 @@ func (cc *ChannelsChooser) Next(group, modelName string, filters ...ChannelsFilt
 	}
 
 	return nil, errors.New("channel not found")
+}
+
+func GetMappedModels(c *Channel) []string {
+	modelMapping := c.GetModelMapping()
+	if modelMapping == "" || modelMapping == "{}" {
+		return []string{}
+	}
+	modelMap := make(map[string]string)
+	err := json.Unmarshal([]byte(modelMapping), &modelMap)
+	if err != nil {
+		return []string{}
+	}
+	mappedModels := make([]string, len(modelMap))
+	for _, value := range modelMap {
+		mappedModels = append(mappedModels, value)
+	}
+	return mappedModels
+}
+
+func (cc *ChannelsChooser) GetGroupModelsWithoutMapped(group string) ([]string, error) {
+	cc.RLock()
+	defer cc.RUnlock()
+
+	if _, ok := cc.Rule[group]; !ok {
+		return nil, errors.New("group not found")
+	}
+
+	models := make([]string, 0, len(cc.Rule[group]))
+	for _, choice := range cc.Channels {
+		if choice.Channel == nil {
+			continue
+		}
+		if !strings.Contains(choice.Channel.Group, group) {
+			continue
+		}
+		mappedModelMap := make(map[string]bool)
+		for _, model := range GetMappedModels(choice.Channel) {
+			mappedModelMap[strings.TrimSpace(model)] = true
+		}
+
+		modelsSlice := strings.Split(choice.Channel.Models, ",")
+		for _, model := range modelsSlice {
+			trimmedModel := strings.TrimSpace(model)
+			if !mappedModelMap[trimmedModel] {
+				models = append(models, trimmedModel)
+			}
+		}
+	}
+	return models, nil
 }
 
 func (cc *ChannelsChooser) GetGroupModels(group string) ([]string, error) {

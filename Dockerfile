@@ -25,7 +25,7 @@ ADD go.mod go.sum ./
 RUN go mod download
 COPY . .
 COPY --from=builder /build/build ./web/build
-RUN go build -ldflags "-s -w -X 'done-hub/common.Version=$(cat VERSION)' -extldflags '-static'" \
+RUN go build -ldflags "-s -w -X 'done-hub/common/config.Version=$(cat VERSION)' -extldflags '-static'" \
 -tags netgo,osusergo \
 -trimpath \
 -buildvcs=false \

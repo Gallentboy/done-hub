@@ -38,7 +38,7 @@ func ListModelsByToken(c *gin.Context) {
 		return
 	}
 
-	models, err := model.ChannelGroup.GetGroupModels(groupName)
+	models, err := model.ChannelGroup.GetGroupModelsWithoutMapped(groupName)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"object": "list",
