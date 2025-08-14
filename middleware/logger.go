@@ -63,8 +63,8 @@ func GinzapWithConfig() gin.HandlerFunc {
 			for _, e := range c.Errors.Errors() {
 				logger.Logger.Error(e, fields...)
 			}
-		} else {
-			logger.Logger.Info("GIN request", fields...)
+		} else if logger.Logger.Core().Enabled(zap.DebugLevel) {
+			logger.Logger.Debug("GIN request", fields...)
 		}
 		metrics.RecordHttp(c, latency)
 	}
