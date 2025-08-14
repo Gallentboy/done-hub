@@ -94,15 +94,16 @@ var Logger *zap.Logger
 var defaultLogDir = "./logs"
 
 func SetupLogger() {
+	var writeSyncer zapcore.WriteSyncer
 	if viper.IsSet("container") {
-		return
+		writeSyncer = zapcore.AddSync(os.Stdout)
+	} else {
+		logDir := getLogDir()
+		if logDir == "" {
+			return
+		}
+		writeSyncer = getLogWriter(logDir)
 	}
-	logDir := getLogDir()
-	if logDir == "" {
-		return
-	}
-
-	writeSyncer := getLogWriter(logDir)
 
 	encoder := getEncoder()
 
@@ -253,7 +254,7 @@ func logHelper(ctx context.Context, level string, msg string) {
 		id = "unknown"
 	}
 
-	logMsg := fmt.Sprintf("%s | %s \n", id, msg)
+	logMsg := fmt.Sprintf("%s | %s", id, msg)
 
 	// Add to in-memory log history
 	logHistory.AddEntry(level, logMsg)
