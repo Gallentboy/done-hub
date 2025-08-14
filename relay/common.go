@@ -64,7 +64,27 @@ func Path2Relay(c *gin.Context, path string) RelayBaseInterface {
 }
 
 func GetProvider(c *gin.Context, modelName string) (provider providersBase.ProviderInterface, newModelName string, fail error) {
-	channel, fail := fetchChannel(c, modelName)
+	// 首先尝试获取匹配的模型名称（处理大小写不敏感）
+	groupName := c.GetString("token_group")
+	if groupName == "" {
+		groupName = c.GetString("group")
+	}
+
+	if groupName == "" {
+		common.AbortWithMessage(c, http.StatusServiceUnavailable, "分组不存在")
+		return
+	}
+
+	matchedModelName, err := model.ChannelGroup.GetMatchedModelName(groupName, modelName)
+	if err != nil {
+		fail = err
+		return
+	}
+
+	// 如果匹配到了不同的模型名称，使用匹配到的名称进行后续处理
+	actualModelName := matchedModelName
+
+	channel, fail := fetchChannel(c, actualModelName)
 	if fail != nil {
 		return
 	}
@@ -76,10 +96,10 @@ func GetProvider(c *gin.Context, modelName string) (provider providersBase.Provi
 		fail = errors.New("channel not found")
 		return
 	}
-	provider.SetOriginalModel(modelName)
+	provider.SetOriginalModel(modelName) // 保存用户原始请求的模型名称
 	c.Set("original_model", modelName)
 
-	newModelName, fail = provider.ModelMappingHandler(modelName)
+	newModelName, fail = provider.ModelMappingHandler(actualModelName) // 使用匹配到的模型名称进行映射
 	if fail != nil {
 		return
 	}
@@ -110,10 +130,10 @@ func fetchChannel(c *gin.Context, modelName string) (channel *model.Channel, fai
 func fetchChannelById(channelId int) (*model.Channel, error) {
 	channel, err := model.GetChannelById(channelId)
 	if err != nil {
-		return nil, errors.New("无效的渠道 Id")
+		return nil, errors.New(model.ErrInvalidChannelId)
 	}
 	if channel.Status != config.ChannelStatusEnabled {
-		return nil, errors.New("该渠道已被禁用")
+		return nil, errors.New(model.ErrChannelDisabled)
 	}
 
 	return channel, nil
@@ -144,12 +164,13 @@ func fetchChannelByModel(c *gin.Context, modelName string) (*model.Channel, erro
 		filters = append(filters, model.FilterDisabledStream(modelName))
 	}
 
-	channel, err := model.ChannelGroup.Next(group, modelName, filters...)
+	channel, err := model.ChannelGroup.NextByValidatedModel(group, modelName, filters...)
 	if err != nil {
-		message := fmt.Sprintf("当前分组 %s 下对于模型 %s 无可用渠道", group, modelName)
+		// 这里只处理渠道相关的错误，模型匹配错误已在上层处理
+		message := fmt.Sprintf(model.ErrNoAvailableChannelForModel, group, modelName)
 		if channel != nil {
 			logger.SysError(fmt.Sprintf("渠道不存在：%d", channel.Id))
-			message = "数据库一致性已被破坏，请联系管理员"
+			message = model.ErrDatabaseConsistencyBroken
 		}
 		return nil, errors.New(message)
 	}
@@ -444,7 +465,7 @@ func processChannelRelayError(ctx context.Context, channelId int, channelName st
 
 var (
 	requestIdRegex = regexp.MustCompile(`\(request id: [^\)]+\)`)
-	quotaKeywords  = []string{"余额", "额度", "quota", "无可用渠道", "令牌"}
+	quotaKeywords  = []string{"余额", "额度", "quota", model.KeywordNoAvailableChannel, "令牌"}
 )
 
 func FilterOpenAIErr(c *gin.Context, err *types.OpenAIErrorWithStatusCode) (errWithStatusCode types.OpenAIErrorWithStatusCode) {

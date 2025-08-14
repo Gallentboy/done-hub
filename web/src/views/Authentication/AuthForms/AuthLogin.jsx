@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   FormControl,
   FormHelperText,
@@ -37,7 +38,8 @@ import Github from 'assets/images/icons/github.svg';
 import Wechat from 'assets/images/icons/wechat.svg';
 import Lark from 'assets/images/icons/lark.svg';
 import Oidc from 'assets/images/icons/oidc.svg';
-import { onGitHubOAuthClicked, onLarkOAuthClicked,onOIDCAuthClicked } from 'utils/common';
+import LinuxDoIcon from 'assets/images/icons/LinuxDoIcon';
+import { onGitHubOAuthClicked, onLarkOAuthClicked,onOIDCAuthClicked, onLinuxDoOAuthClicked } from 'utils/common';
 import { useTranslation } from 'react-i18next';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
@@ -53,7 +55,7 @@ const LoginForm = ({ ...others }) => {
   // const [checked, setChecked] = useState(true);
 
   let tripartiteLogin = false;
-  if (siteInfo.github_oauth || siteInfo.wechat_login || siteInfo.lark_client_id || siteInfo.oidc_auth) {
+  if (siteInfo.github_oauth || siteInfo.wechat_login || siteInfo.lark_client_id || siteInfo.oidc_auth || siteInfo.linuxDo_oauth) {
     tripartiteLogin = true;
   }
 
@@ -91,7 +93,7 @@ const LoginForm = ({ ...others }) => {
                     ...theme.typography.LoginButton
                   }}
                 >
-                  <Box sx={{ mr: { xs: 1, sm: 2, width: 20 }, display: 'flex', alignItems: 'center' }}>
+                  <Box sx={{ mr: { xs: 1, sm: 2 }, display: 'flex', alignItems: 'center', minWidth: 25 }}>
                     <img src={Github} alt="github" width={25} height={25} style={{ marginRight: matchDownSM ? 8 : 16 }} />
                   </Box>
                   {t('login.useGithubLogin')}
@@ -112,7 +114,7 @@ const LoginForm = ({ ...others }) => {
                     ...theme.typography.LoginButton
                   }}
                 >
-                  <Box sx={{ mr: { xs: 1, sm: 2, width: 20 }, display: 'flex', alignItems: 'center' }}>
+                  <Box sx={{ mr: { xs: 1, sm: 2 }, display: 'flex', alignItems: 'center', minWidth: 25 }}>
                     <img src={Wechat} alt="Wechat" width={25} height={25} style={{ marginRight: matchDownSM ? 8 : 16 }} />
                   </Box>
                   {t('login.useWechatLogin')}
@@ -134,7 +136,7 @@ const LoginForm = ({ ...others }) => {
                     ...theme.typography.LoginButton
                   }}
                 >
-                  <Box sx={{ mr: { xs: 1, sm: 2, width: 20 }, display: 'flex', alignItems: 'center' }}>
+                  <Box sx={{ mr: { xs: 1, sm: 2 }, display: 'flex', alignItems: 'center', minWidth: 25 }}>
                     <img src={Lark} alt="Lark" width={25} height={25} style={{ marginRight: matchDownSM ? 8 : 16 }} />
                   </Box>
                   {t('login.useLarkLogin')}
@@ -156,10 +158,35 @@ const LoginForm = ({ ...others }) => {
                     ...theme.typography.LoginButton
                   }}
                 >
-                  <Box sx={{ mr: { xs: 1, sm: 2, width: 20 }, display: 'flex', alignItems: 'center' }}>
+                  <Box sx={{ mr: { xs: 1, sm: 2 }, display: 'flex', alignItems: 'center', minWidth: 25 }}>
                     <img src={Oidc} alt="oidc" width={25} height={25} style={{ marginRight: matchDownSM ? 8 : 16 }} />
                   </Box>
                   {t('login.useOIDCLogin')}
+                </Button>
+              </AnimateButton>
+            </Grid>
+          )}
+          {siteInfo.linuxDo_oauth && (
+            <Grid item xs={12}>
+              <AnimateButton>
+                <Button
+                  disableElevation
+                  fullWidth
+                  onClick={() => onLinuxDoOAuthClicked(siteInfo.linuxDo_client_id, true)}
+                  size="large"
+                  variant="outlined"
+                  sx={{
+                    ...theme.typography.LoginButton
+                  }}
+                >
+                  <Box sx={{ mr: { xs: 1, sm: 2 }, display: 'flex', alignItems: 'center', minWidth: 25 }}>
+                    <LinuxDoIcon
+                      size={25}
+                      variant="login"
+                      style={{ marginRight: matchDownSM ? 8 : 16 }}
+                    />
+                  </Box>
+                  {t('login.useLinuxDoLogin')}
                 </Button>
               </AnimateButton>
             </Grid>
@@ -290,8 +317,17 @@ const LoginForm = ({ ...others }) => {
 
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
-                <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                  {t('menu.login')}
+                <Button
+                  disableElevation
+                  disabled={isSubmitting}
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                  {isSubmitting ? t('login.loggingIn') : t('menu.login')}
                 </Button>
               </AnimateButton>
             </Box>

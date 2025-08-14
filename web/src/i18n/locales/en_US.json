@@ -243,7 +243,20 @@
     "pleaseSelectChannelsForUserGroup": "Please select at least one channel",
     "addingUserGroup": "Adding...",
     "addUserGroupToChannels": "Add user group to {{count}} channels",
-    "batchAddUserGroupSuccess": "Successfully added user group \"{{group}}\" to {{count}} channels"
+    "batchAddUserGroupSuccess": "Successfully added user group \"{{group}}\" to {{count}} channels",
+    "batchAddModel": "Batch Add Model",
+    "batchAddModelTip": "Select channels and add models. Supports multiple models (comma-separated). If a channel already has a model, it will be skipped.",
+    "selectModelToAdd": "Select or input models to add",
+    "pleaseSelectModel": "Please select or input models",
+    "pleaseSelectChannelsForModel": "Please select at least one channel",
+    "channelAlreadyHasModel": "(Already has some models)",
+    "currentModels": "Current models",
+    "noModels": "None",
+    "addingModel": "Adding...",
+    "addModelToChannels": "Add models to {{count}} channels",
+    "batchAddModelSuccess": "Successfully added models \"{{model}}\" to {{count}} channels",
+    "modelInputTip": "Supports multiple models, separated by commas",
+    "loadingChannels": "Loading channels..."
   },
   "channel_row": {
     "auto": "automatic",
@@ -545,7 +558,9 @@
     "usernameOrEmail": "Username/Email",
     "usernameRequired": "Username/Email is required",
     "wechatLoginInfo": "Please use WeChat to scan the QR code to follow the official account and enter the \"verification code\" to obtain the verification code (valid within three minutes)",
-    "wechatVerificationCodeLogin": "WeChat verification code login"
+    "wechatVerificationCodeLogin": "WeChat verification code login",
+    "useLinuxDoLogin": "Log in with LINUX DO",
+    "loggingIn": "Logging in..."
   },
   "midjourneyPage": {
     "channel": "Channel",
@@ -774,7 +789,8 @@
     "usernameMinLength": "Username must be at least 3 characters long",
     "usernameRequired": "Username cannot be empty",
     "wechatBindSuccess": "WeChat account successfully bound!",
-    "yourTokenIs": "Your access token is:"
+    "yourTokenIs": "Your access token is:",
+    "bindLinuxDoAccount": "Bind LINUX DO Account"
   },
   "redemption": "Redemption",
   "redemptionPage": {
@@ -872,7 +888,9 @@
         },
         "emptyResponseBilling": "Empty Response Billing",
         "unifiedRequestResponseModel": "Unified Request Response Model",
-        "unifiedRequestResponseModelTooltip": "When model mapping exists, the model value in the response will be the requested model value instead of the actual called model name"
+        "unifiedRequestResponseModelTooltip": "When model mapping exists, the model value in the response will be the requested model value instead of the actual called model name",
+        "modelNameCaseInsensitive": "Model Name Case Insensitive",
+        "modelNameCaseInsensitiveTooltip": "When enabled, model matching will ignore case sensitivity, e.g., GPT-4, gpt-4, Gpt-4 will all match the same model"
       },
       "logSettings": {
         "clearLogs": "Clear Historical Logs",
@@ -1158,7 +1176,22 @@
         "title": "System Settings",
         "updateServerAddress": "Update Server Address"
       },
-      "title": "System Settings"
+      "title": "System Settings",
+      "configureLinuxDoOAuthApp": {
+        "title": "Configure LINUX DO OAuth App",
+        "subTitle": "Used to support login and registration via LINUX DO,",
+        "manageLink": "Click here",
+        "manage": "Manage your LINUX DO App",
+        "alert1": "Homepage URL: ",
+        "alert2": ", Authorization callback URL: ",
+        "clientId": "LINUX DO Client ID",
+        "clientSecret": "LINUX DO Client Secret",
+        "lowestTrustLevel": "LINUX DO Trust Level",
+        "clientIdPlaceholder": "Enter the ID of your registered LINUX DO OAuth APP",
+        "clientSecretPlaceholder": "Sensitive information will not be sent to the frontend for display",
+        "lowestTrustLevelPlaceholder": "Enter the minimum trust level to restrict",
+        "saveButton": "Save LINUX DO OAuth Settings"
+      }
     }
   },
   "shimmer 映射": "shimmer mapping",

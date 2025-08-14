@@ -18,7 +18,8 @@ const useLogin = () => {
       });
       const { success, message } = res.data;
       if (success) {
-        loadUser();
+        // 等待用户信息加载完成后再跳转
+        await loadUser();
         loadUserGroup();
         navigate('/panel');
       }
@@ -39,7 +40,8 @@ const useLogin = () => {
           showSuccess(t('common.bindOk'));
           navigate('/panel');
         } else {
-          loadUser();
+          // 等待用户信息加载完成后再跳转
+          await loadUser();
           loadUserGroup();
           showSuccess(t('common.loginOk'));
           navigate('/panel');
@@ -85,7 +87,8 @@ const useLogin = () => {
           showSuccess(t('common.bindOk'));
           navigate('/panel');
         } else {
-          loadUser();
+          // 等待用户信息加载完成后再跳转
+          await loadUser();
           showSuccess(t('common.loginOk'));
           navigate('/panel');
         }
@@ -103,10 +106,35 @@ const useLogin = () => {
       const res = await API.get(`/api/oauth/wechat?code=${code}&aff=${affCode}`);
       const { success, message } = res.data;
       if (success) {
-        loadUser();
+        // 等待用户信息加载完成后再跳转
+        await loadUser();
         loadUserGroup();
         showSuccess(t('common.loginOk'));
         navigate('/panel');
+      }
+      return { success, message };
+    } catch (err) {
+      // 请求失败，设置错误信息
+      return { success: false, message: '' };
+    }
+  };
+
+  const linuxDoLogin = async (code, state) => {
+    try {
+      const affCode = localStorage.getItem('aff');
+      const res = await API.get(`/api/oauth/linuxdo?code=${code}&state=${state}&aff=${affCode}`);
+      const { success, message } = res.data;
+      if (success) {
+        if (message === 'bind') {
+          showSuccess(t('common.bindOk'));
+          navigate('/panel');
+        } else {
+          // 等待用户信息加载完成后再跳转
+          await loadUser();
+          loadUserGroup();
+          showSuccess(t('common.loginOk'));
+          navigate('/panel');
+        }
       }
       return { success, message };
     } catch (err) {
@@ -151,7 +179,7 @@ const useLogin = () => {
     return [];
   }, []);
 
-  return { login, logout, githubLogin, wechatLogin, larkLogin, oidcLogin, loadUser, loadUserGroup };
+  return { login, logout, githubLogin, wechatLogin, larkLogin, oidcLogin, linuxDoLogin, loadUser, loadUserGroup };
 };
 
 export default useLogin;

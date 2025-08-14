@@ -222,7 +222,20 @@
     "pleaseSelectChannelsForUserGroup": "请选择至少一个渠道",
     "addingUserGroup": "添加中...",
     "addUserGroupToChannels": "为 {{count}} 个渠道添加用户分组",
-    "batchAddUserGroupSuccess": "成功为 {{count}} 个渠道添加用户分组 \"{{group}}\""
+    "batchAddUserGroupSuccess": "成功为 {{count}} 个渠道添加用户分组 \"{{group}}\"",
+    "batchAddModel": "批量添加模型",
+    "batchAddModelTip": "选择渠道并添加模型。支持输入多个模型（逗号分隔）。如果渠道已有某个模型，将跳过该模型。",
+    "selectModelToAdd": "选择或输入要添加的模型",
+    "pleaseSelectModel": "请选择或输入模型",
+    "pleaseSelectChannelsForModel": "请选择至少一个渠道",
+    "channelAlreadyHasModel": "（已有部分模型）",
+    "currentModels": "当前模型",
+    "noModels": "无",
+    "addingModel": "添加中...",
+    "addModelToChannels": "为 {{count}} 个渠道添加模型",
+    "batchAddModelSuccess": "成功为 {{count}} 个渠道添加模型 \"{{model}}\"",
+    "modelInputTip": "支持输入多个模型，用逗号分隔",
+    "loadingChannels": "正在加载渠道列表..."
   },
   "channel_edit": {
     "customModelTip": "自定义：点击或回车输入",
@@ -587,6 +600,7 @@
     "bindWechatAccount": "绑定微信账号",
     "bindGitHubAccount": "绑定Github账号",
     "bindLarkAccount": "绑定飞书账号",
+    "bindLinuxDoAccount": "绑定LINUX DO账号",
     "changeEmail": "更换邮箱",
     "bindEmail": "绑定邮箱",
     "telegramBot": "Telegram 机器人",
@@ -747,6 +761,8 @@
         "emptyResponseBilling": "空回复计费",
         "unifiedRequestResponseModel": "统一请求响应模型",
         "unifiedRequestResponseModelTooltip": "当存在模型映射时，响应中的model值为请求的model值，而非实际调用的模型名称",
+        "modelNameCaseInsensitive": "模型名称大小写不敏感",
+        "modelNameCaseInsensitiveTooltip": "开启后，模型匹配时将忽略大小写，例如 GPT-4、gpt-4、Gpt-4 都会匹配到同一个模型",
         "saveButton": "保存通用设置"
       },
       "invoice": {
@@ -918,7 +934,9 @@
         "larkAuth": "允许通过飞书登录 & 注册",
         "registerEnabled": "允许新用户注册（此项为否时，新用户将无法以任何方式进行注册）",
         "turnstileCheck": "启用 Turnstile 用户校验",
-        "gitHubOldIdClose": "关闭 GitHub 老 ID 登录"
+        "gitHubOldIdClose": "关闭 GitHub 老 ID 登录",
+        "linuxDoOAuth": "允许通过 LINUX DO 账户登录 & 注册",
+        "linuxDoOAuthTrustLevel": "允许通过 LINUX DO 信任等级进行限制"
       },
       "configureEmailDomainWhitelist": {
         "title": "配置邮箱域名白名单",
@@ -942,6 +960,21 @@
         "smtpToken": "SMTP 访问凭证",
         "smtpTokenPlaceholder": "敏感信息不会发送到前端显示",
         "save": "保存 SMTP 设置"
+      },
+      "configureLinuxDoOAuthApp": {
+        "title": "配置 LINUX DO OAuth 应用",
+        "subTitle": "用以支持通过 LINUX DO 进行登录注册，",
+        "manageLink": "点击此处",
+        "manage": "管理你的 LINUX DO App",
+        "alert1": "Homepage URL 填",
+        "alert2": "，Authorization callback URL 填",
+        "clientId": "LINUX DO Client ID",
+        "clientSecret": "LINUX DO Client Secret",
+        "lowestTrustLevel": "LINUX DO Trust Level",
+        "clientIdPlaceholder": "输入你注册的 LINUX DO OAuth APP 的 ID",
+        "clientSecretPlaceholder": "敏感信息不会发送到前端显示",
+        "lowestTrustLevelPlaceholder": "输入需要限制的最低信任等级",
+        "saveButton": "保存 LINUX DO OAuth 设置"
       },
       "configureGitHubOAuthApp": {
         "title": "配置 GitHub OAuth 应用",
@@ -1086,7 +1119,12 @@
     "useGithubLogin": "使用 Github 登录",
     "useWechatLogin": "使用 Wechat 登录",
     "useOIDCLogin": "使用 OIDC 登录",
-    "useLarkLogin": "使用飞书登录"
+    "useLarkLogin": "使用飞书登录",
+    "linuxDoLogin": "LINUX DO 登录",
+    "useLinuxDoLogin": "使用 LINUX DO 登录",
+    "linuxDoError": "操作失败，重定向至登录界面中...",
+    "linuxDoCountError": "出现错误，第 {{count}} 次重试中...",
+    "loggingIn": "登录中..."
   },
   "description": "All in one 的 OpenAI 接口\n整合各种 API 访问方式\n一键部署，开箱即用",
   "about": {

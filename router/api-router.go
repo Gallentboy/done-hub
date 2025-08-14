@@ -51,6 +51,9 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.GET("/oauth/endpoint", middleware.CriticalRateLimit(), middleware.SessionSecurity(), controller.OIDCEndpoint)
 		apiRouter.GET("/oauth/oidc", middleware.CriticalRateLimit(), middleware.SessionSecurity(), controller.OIDCAuth)
 
+		apiRouter.GET("/oauth/linuxdo", middleware.CriticalRateLimit(), middleware.SessionSecurity(), controller.LinuxDoOAuth)
+		apiRouter.GET("/oauth/linuxdo/bind", middleware.CriticalRateLimit(), middleware.SessionSecurity(), middleware.UserAuth(), controller.LinuxDoBind)
+
 		apiRouter.Any("/payment/notify/:uuid", controller.PaymentCallback)
 
 		userRoute := apiRouter.Group("/user")
@@ -145,6 +148,7 @@ func SetApiRouter(router *gin.Engine) {
 			channelRoute.PUT("/", controller.UpdateChannel)
 			channelRoute.PUT("/batch/azure_api", controller.BatchUpdateChannelsAzureApi)
 			channelRoute.PUT("/batch/del_model", controller.BatchDelModelChannels)
+			channelRoute.PUT("/batch/add_model", controller.BatchAddModelToChannels)
 			channelRoute.PUT("/batch/add_user_group", controller.BatchAddUserGroupToChannels)
 			channelRoute.DELETE("/disabled", controller.DeleteDisabledChannel)
 			channelRoute.DELETE("/:id/tag", controller.DeleteChannelTag)
