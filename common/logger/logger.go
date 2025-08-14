@@ -94,6 +94,9 @@ var Logger *zap.Logger
 var defaultLogDir = "./logs"
 
 func SetupLogger() {
+	if viper.IsSet("container") {
+		return
+	}
 	logDir := getLogDir()
 	if logDir == "" {
 		return
