@@ -1,3 +1,4 @@
+# Stage 1: Build the web frontend
 FROM node:24 as builder
 
 WORKDIR /build
@@ -11,34 +12,48 @@ COPY ./web .
 COPY ./VERSION .
 RUN DISABLE_ESLINT_PLUGIN='true' VITE_APP_VERSION=$(cat VERSION) yarn build
 
-FROM golang:1.24.6 AS builder2
+# Stage 2: Build the Go backend
+FROM --platform=${BUILDPLATFORM} golang:1.24.6 AS builder2
 
-ENV GO111MODULE=on \
-    CGO_ENABLED=1 \
-    GOOS=linux \
-    GOARM=7 \
-    CGO_CFLAGS="-O3 -march=armv8-a" \
-    CGO_CXXFLAGS="-O3 -march=armv8-a"
-
+# Set the working directory
 WORKDIR /build
-ADD go.mod go.sum ./
+
+# Download dependencies
+ADD go.mod go.sum .
 RUN go mod download
+
+# Copy the rest of the source code
 COPY . .
+
+# Copy the built frontend from the 'builder' stage
 COPY --from=builder /build/build ./web/build
-RUN go build -ldflags "-s -w -X 'done-hub/common/config.Version=$(cat VERSION)' -extldflags '-static'" \
+
+# Build the Go application for the target platform
+ARG TARGETOS
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags "-s -w -X 'done-hub/common/config.Version=$(cat VERSION)'"
 -tags netgo,osusergo \
 -trimpath \
 -buildvcs=false \
 -o done-hub
 
+# Stage 3: Create the final, minimal image
 FROM alpine:latest
 
+# Install necessary certificates and timezone data
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache ca-certificates tzdata && \
     update-ca-certificates 2>/dev/null || true
 
+# Copy the built binary from the 'builder2' stage
 COPY --from=builder2 /build/done-hub /
+
+# Expose the application port
 EXPOSE 3000
+
+# Set the working directory for the application data
 WORKDIR /data
+
+# Set the entrypoint for the container
 ENTRYPOINT ["/done-hub"]
