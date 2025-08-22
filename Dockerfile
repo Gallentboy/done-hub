@@ -8,7 +8,7 @@ COPY web/yarn.lock .
 
 RUN yarn --frozen-lockfile
 
-COPY ./web .
+COPY ./web . 
 COPY ./VERSION .
 RUN DISABLE_ESLINT_PLUGIN='true' VITE_APP_VERSION=$(cat VERSION) yarn build
 
@@ -31,11 +31,7 @@ COPY --from=builder /build/build ./web/build
 # Build the Go application for the target platform
 ARG TARGETOS
 ARG TARGETARCH
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags "-s -w -X 'done-hub/common/config.Version=$(cat VERSION)'"
--tags netgo,osusergo \
--trimpath \
--buildvcs=false \
--o done-hub
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags "-s -w -X 'done-hub/common/config.Version=$(cat VERSION)'" -tags netgo,osusergo -trimpath -buildvcs=false -o done-hub
 
 # Stage 3: Create the final, minimal image
 FROM alpine:latest
