@@ -21,6 +21,13 @@ jobs:
         id: version
         run: echo "VERSION=$(cat VERSION)" >> $GITHUB_OUTPUT
 
+      - name: Prepare image tags
+        id: prep
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          TAGS="ghcr.io/$OWNER/done-hub:latest,ghcr.io/$OWNER/done-hub:${{ steps.version.outputs.VERSION }}"
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+
       - name: Log in to the GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -38,6 +45,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64
           push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner,, }}/done-hub:latest
-            ghcr.io/${{ github.repository_owner,, }}/done-hub:${{ steps.version.outputs.VERSION }}
+          tags: ${{ steps.prep.outputs.tags }}
