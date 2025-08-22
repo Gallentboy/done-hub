@@ -34,7 +34,7 @@ COPY --from=builder /build/build ./web/build
 # Build the Go application for the target platform
 ARG TARGETOS
 ARG TARGETARCH
-RUN CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} CC=musl-gcc \
+RUN CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOAMD64=v3 CC=musl-gcc \
     go build -ldflags "-s -w -X 'done-hub/common/config.Version=$(cat VERSION)' -extldflags '-static'" \
     -tags netgo,osusergo \
     -o done-hub
