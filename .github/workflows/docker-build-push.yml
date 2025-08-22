@@ -39,5 +39,5 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/done-hub:latest
-            ghcr.io/${{ github.repository_owner }}/done-hub:${{ steps.version.outputs.VERSION }}
+            ghcr.io/${{ github.repository_owner,, }}/done-hub:latest
+            ghcr.io/${{ github.repository_owner,, }}/done-hub:${{ steps.version.outputs.VERSION }}
