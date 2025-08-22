@@ -8,12 +8,15 @@ COPY web/yarn.lock .
 
 RUN yarn --frozen-lockfile
 
-COPY ./web . 
+COPY ./web .
 COPY ./VERSION .
 RUN DISABLE_ESLINT_PLUGIN='true' VITE_APP_VERSION=$(cat VERSION) yarn build
 
 # Stage 2: Build the Go backend
 FROM --platform=${BUILDPLATFORM} golang:1.24.6 AS builder2
+
+# Install musl-tools for static CGo builds compatible with Alpine
+RUN apt-get update && apt-get install -y musl-tools
 
 # Set the working directory
 WORKDIR /build
@@ -31,7 +34,10 @@ COPY --from=builder /build/build ./web/build
 # Build the Go application for the target platform
 ARG TARGETOS
 ARG TARGETARCH
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags "-s -w -X 'done-hub/common/config.Version=$(cat VERSION)'" -tags netgo,osusergo -trimpath -buildvcs=false -o done-hub
+RUN CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} CC=musl-gcc \
+    go build -ldflags "-s -w -X 'done-hub/common/config.Version=$(cat VERSION)' -extldflags '-static'" \
+    -tags netgo,osusergo \
+    -o done-hub
 
 # Stage 3: Create the final, minimal image
 FROM alpine:latest
