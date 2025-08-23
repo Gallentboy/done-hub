@@ -88,16 +88,8 @@ func memoryRateLimiter(c *gin.Context, maxRequestNum int, duration int64, mark s
 }
 
 func rateLimitFactory(maxRequestNum int, duration int64, mark string) func(c *gin.Context) {
-	if config.RedisEnabled {
-		return func(c *gin.Context) {
-			redisRateLimiter(c, maxRequestNum, duration, mark)
-		}
-	} else {
-		// It's safe to call multi times.
-		inMemoryRateLimiter.Init(config.RateLimitKeyExpirationDuration)
-		return func(c *gin.Context) {
-			memoryRateLimiter(c, maxRequestNum, duration, mark)
-		}
+	return func(c *gin.Context) {
+		c.Next()
 	}
 }
 

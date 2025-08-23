@@ -145,7 +145,7 @@ func setKlingRouter(router *gin.Engine) {
 	relayKlingRouter.GET("/v1/videos/text2video/:id", kling.GetFetchByID)
 	relayKlingRouter.GET("/v1/videos/image2video/:id", kling.GetFetchByID)
 
-	relayKlingRouter.Use(middleware.DynamicRedisRateLimiter())
+	relayKlingRouter.Use()
 	{
 		relayKlingRouter.POST("/v1/:class/:action", task.RelayTaskSubmit)
 	}

@@ -257,7 +257,7 @@ func SetApiRouter(router *gin.Engine) {
 	}
 
 	sseRouter := router.Group("/api/sse")
-	sseRouter.Use(middleware.GlobalAPIRateLimit())
+	// sseRouter.Use(middleware.GlobalAPIRateLimit())
 	{
 		sseRouter.POST("/channel/check", middleware.AdminAuth(), controller.CheckChannel)
 	}
