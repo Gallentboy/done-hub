@@ -65,15 +65,15 @@ const Setting = {
           breadcrumbs: false,
           isAdmin: true
         },
-        {
-          id: 'telegram',
-          title: 'Telegram Bot',
-          type: 'item',
-          url: '/panel/telegram',
-          icon: icons.IconBrandTelegram,
-          breadcrumbs: false,
-          isAdmin: true
-        },
+        // {
+        //   id: 'telegram',
+        //   title: 'Telegram Bot',
+        //   type: 'item',
+        //   url: '/panel/telegram',
+        //   icon: icons.IconBrandTelegram,
+        //   breadcrumbs: false,
+        //   isAdmin: true
+        // },
         {
           id: 'model_ownedby',
           title: '模型归属',
@@ -85,33 +85,33 @@ const Setting = {
         }
       ]
     },
-    {
-      id: 'paySetting',
-      title: '支付设置',
-      type: 'collapse',
-      icon: icons.IconBrandPaypal,
-      isAdmin: true,
-      children: [
-        {
-          id: 'redemption',
-          title: '兑换',
-          type: 'item',
-          url: '/panel/redemption',
-          icon: icons.IconCoin,
-          breadcrumbs: false,
-          isAdmin: true
-        },
-        {
-          id: 'payment',
-          title: '支付',
-          type: 'item',
-          url: '/panel/payment',
-          icon: icons.IconBrandPaypal,
-          breadcrumbs: false,
-          isAdmin: true
-        }
-      ]
-    },
+    // {
+    //   id: 'paySetting',
+    //   title: '支付设置',
+    //   type: 'collapse',
+    //   icon: icons.IconBrandPaypal,
+    //   isAdmin: true,
+    //   children: [
+    //     {
+    //       id: 'redemption',
+    //       title: '兑换',
+    //       type: 'item',
+    //       url: '/panel/redemption',
+    //       icon: icons.IconCoin,
+    //       breadcrumbs: false,
+    //       isAdmin: true
+    //     },
+    //     {
+    //       id: 'payment',
+    //       title: '支付',
+    //       type: 'item',
+    //       url: '/panel/payment',
+    //       icon: icons.IconBrandPaypal,
+    //       breadcrumbs: false,
+    //       isAdmin: true
+    //     }
+    //   ]
+    // },
 
     {
       id: 'token',
