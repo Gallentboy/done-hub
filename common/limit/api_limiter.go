@@ -20,32 +20,35 @@ const (
 // 适用场景	对突刺不敏感的高吞吐场景	对流量敏感的关键业务场景
 func NewAPILimiter(rpm int) RateLimiter {
 	// 如果Redis未启用，使用内存限流器
-	if !config.RedisEnabled {
-		if rpm < RPMThreshold {
-			// 对于低RPM，使用固定窗口方式
-			return NewMemoryLimiter(rpm, rpm, window, false)
-		} else {
-			// 对于高RPM，使用令牌桶方式
-			ratePerSecond := float64(rpm) / 60
-			return NewMemoryLimiter(int(ratePerSecond), rpm, window, true)
-		}
-	}
+	// if !config.RedisEnabled {
+	// 	if rpm < RPMThreshold {
+	// 		// 对于低RPM，使用固定窗口方式
+	// 		return NewMemoryLimiter(rpm, rpm, window, false)
+	// 	} else {
+	// 		// 对于高RPM，使用令牌桶方式
+	// 		ratePerSecond := float64(rpm) / 60
+	// 		return NewMemoryLimiter(int(ratePerSecond), rpm, window, true)
+	// 	}
+	// }
 
-	// Redis启用时，使用Redis限流器
-	if rpm < RPMThreshold {
-		// 如果是rpm设定值较小，说明并发较小，使用固定窗口
-		return NewCountLimiter(rpm, rpm, window)
-	}
-	// 将RPM转换为每秒速率
-	ratePerSecond := float64(rpm) / 60
-	burst := int(ratePerSecond * TokenBurstMultiplier)
-	return NewTokenLimiter(
-		int(ratePerSecond),
-		rpm,
-		burst,
-	)
+	// // Redis启用时，使用Redis限流器
+	// if rpm < RPMThreshold {
+	// 	// 如果是rpm设定值较小，说明并发较小，使用固定窗口
+	// 	return NewCountLimiter(rpm, rpm, window)
+	// }
+	// // 将RPM转换为每秒速率
+	// ratePerSecond := float64(rpm) / 60
+	// burst := int(ratePerSecond * TokenBurstMultiplier)
+	// return NewTokenLimiter(
+	// 	int(ratePerSecond),
+	// 	rpm,
+	// 	burst,
+	// )
 	// 如果是rpm设定值较大，说明并发较大，限流敏感，使用滑动窗口灵活限流
 	//return NewSlidingWindowLimiter(rpm, rpm, window)
+
+	// 返回一个速率极高的限流器，相当于取消限流
+	return NewMemoryLimiter(9999999, 9999999, window, true)
 }
 
 // GetMaxRate 获取限流器的最大速率（rpm）
