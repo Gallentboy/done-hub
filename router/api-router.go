@@ -236,16 +236,16 @@ func SetApiRouter(router *gin.Engine) {
 
 		}
 
-		paymentRoute := apiRouter.Group("/payment")
-		paymentRoute.Use(middleware.AdminAuth())
-		{
-			paymentRoute.GET("/order", controller.GetOrderList)
-			paymentRoute.GET("/", controller.GetPaymentList)
-			paymentRoute.GET("/:id", controller.GetPayment)
-			paymentRoute.POST("/", controller.AddPayment)
-			paymentRoute.PUT("/", controller.UpdatePayment)
-			paymentRoute.DELETE("/:id", controller.DeletePayment)
-		}
+		// paymentRoute := apiRouter.Group("/payment")
+		// paymentRoute.Use(middleware.AdminAuth())
+		// {
+		// 	paymentRoute.GET("/order", controller.GetOrderList)
+		// 	paymentRoute.GET("/", controller.GetPaymentList)
+		// 	paymentRoute.GET("/:id", controller.GetPayment)
+		// 	paymentRoute.POST("/", controller.AddPayment)
+		// 	paymentRoute.PUT("/", controller.UpdatePayment)
+		// 	paymentRoute.DELETE("/:id", controller.DeletePayment)
+		// }
 
 		mjRoute := apiRouter.Group("/mj")
 		mjRoute.GET("/self", middleware.UserAuth(), controller.GetUserMidjourney)
