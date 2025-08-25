@@ -1,7 +1,6 @@
 package limit
 
 import (
-	"done-hub/common/config"
 	"time"
 )
 
