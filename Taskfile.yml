@@ -93,18 +93,3 @@ tasks:
   default:
     cmds:
       - task: build
-  
-  sync-upstream:
-    desc: "与上游同步，更新版本，提交并推送到 origin"
-    cmds:
-      - git fetch --all
-      - git merge fork/main
-      - export LATEST_TAG=$(git describe --tags --abbrev=0)
-      - export NEW_VERSION=$(echo $LATEST_TAG | sed 's/^v//')
-      - echo "正在更新版本文件到 $NEW_VERSION"
-      - echo $NEW_VERSION > VERSION
-      - git add VERSION
-      - git commit -m "chore(version): Update version to $NEW_VERSION"
-      - echo "版本更新提交完成，正在推送到 origin..."
-      - git push origin main
-      - echo "推送完成！"
