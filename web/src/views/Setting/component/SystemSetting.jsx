@@ -51,6 +51,7 @@ const SystemSetting = () => {
     SMTPFrom: '',
     SMTPToken: '',
     ServerAddress: '',
+    PaymentCallbackAddress: '',
     Footer: '',
     WeChatAuthEnabled: '',
     WeChatServerAddress: '',
@@ -165,6 +166,7 @@ const SystemSetting = () => {
       name === 'Notice' ||
       name.startsWith('SMTP') ||
       name === 'ServerAddress' ||
+      name === 'PaymentCallbackAddress' ||
       name === 'GitHubClientId' ||
       name === 'GitHubClientSecret' ||
       name === 'OIDCClientId' ||
@@ -190,9 +192,45 @@ const SystemSetting = () => {
     }
   }
 
-  const submitServerAddress = async() => {
+  const updateOptionWithoutRefresh = async(key, value) => {
+    setLoading(true)
+    try {
+      const res = await API.put('/api/option/', {
+        key,
+        value
+      })
+      const { success, message } = res.data
+      if (success) {
+        if (key === 'EmailDomainWhitelist') {
+          value = value.split(',')
+        }
+        setInputs((inputs) => ({
+          ...inputs,
+          [key]: value
+        }))
+        // 不调用getOptions()避免闪烁
+        return true
+      } else {
+        showError(message)
+        return false
+      }
+    } catch (error) {
+      showError('更新失败')
+      return false
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const submitSystemSettings = async() => {
     let ServerAddress = removeTrailingSlash(inputs.ServerAddress)
-    await updateOption('ServerAddress', ServerAddress)
+    const success1 = await updateOptionWithoutRefresh('ServerAddress', ServerAddress)
+    const success2 = await updateOptionWithoutRefresh('PaymentCallbackAddress', inputs.PaymentCallbackAddress || '')
+
+    if (success1 && success2) {
+      await loadStatus()
+      showSuccess('设置成功！')
+    }
   }
 
   const submitSMTP = async() => {
@@ -312,8 +350,22 @@ const SystemSetting = () => {
               </FormControl>
             </Grid>
             <Grid xs={12}>
-              <Button variant="contained" onClick={submitServerAddress}>
-                {t('setting_index.systemSettings.generalSettings.updateServerAddress')}
+              <FormControl fullWidth>
+                <InputLabel htmlFor="PaymentCallbackAddress">支付回调地址</InputLabel>
+                <OutlinedInput
+                  id="PaymentCallbackAddress"
+                  name="PaymentCallbackAddress"
+                  value={inputs.PaymentCallbackAddress || ''}
+                  onChange={handleInputChange}
+                  label="支付回调地址"
+                  placeholder="为空时默认使用服务器地址"
+                  disabled={loading}
+                />
+              </FormControl>
+            </Grid>
+            <Grid xs={12}>
+              <Button variant="contained" onClick={submitSystemSettings}>
+                更新系统设置
               </Button>
             </Grid>
           </Grid>
